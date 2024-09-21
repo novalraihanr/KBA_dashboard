@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 const BarChart = ({ selectedYear }) => {
     const [pendapatanData, setPendapatanData] = useState([]);
@@ -33,13 +33,22 @@ const BarChart = ({ selectedYear }) => {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
-                label: 'Pendapatan',
+                label: 'Actial Income',
                 data: pendapatanData,
-                backgroundColor: '#0095FF',
-                borderColor: '#0095FF',
-                borderWidth: 0,
-                barThickness: 7,
-                borderRadius: 2,
+                backgroundColor: '#4AB58E',
+                borderColor: '#4AB58E',
+                borderWidth: 1,
+                borderRadius: 5,
+                barThickness: 20,
+            },
+            {
+                label: 'Target Income',
+                data: [4000, 8000, 12000, 9000, 15000, 28000, 30000, 39000, 34000, 20000, 32000, 35000],
+                backgroundColor: '#FFCF00',
+                borderColor: '#FFCF00',
+                borderWidth: 1,
+                borderRadius: 5,
+                barThickness: 20,
             },
         ],
     };
@@ -53,76 +62,63 @@ const BarChart = ({ selectedYear }) => {
             },
             tooltip: {
                 callbacks: {
-                    label: (context) => {
-                        const label = context.dataset.label || '';
-                        const value = context.raw;
-                        return label ? `${label}: ${value}` : value;
+                    title: (tooltipItems) => {
+                        return tooltipItems[0].label;
+                    },
+                    label: (tooltipItem) => {
+                        return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
                     },
                 },
-                intersect: false,
                 mode: 'index',
-                animationDuration: 400,
+                intersect: false,
+                animation: {
+                    duration: 400,
+                },
             },
         },
         scales: {
             x: {
-                ticks: {
-                    font: {
-                        size: 8,
-                        style: 'normal',
-                        color: '#464E5F',
-                    },
-                    callback: function (value, index) {
-                        return data.labels[index];
-                    },
-                    maxRotation: 0,
-                    padding: 0,
-                },
+                display: true,
                 grid: {
                     display: false,
-                }
-            },
-            y: {
-                beginAtZero: true,
+                },
                 ticks: {
                     font: {
                         size: 10,
+                        color: '#464E5F',
                     },
-                    stepSize: 1000,
-                    callback: function (value) {
-                        return value / 1000 + 'k';
-                    },
-                    padding: 5,
+                    maxRotation: 0,
+                    autoSkip: false,
                 },
+                border: {
+                    display: false,
+                },
+                barPercentage: 0.9,
+                categoryPercentage: 1,
+            },
+            y: {
+                display: false,
                 grid: {
-                    borderDash: [5, 5],
+                    display: false,
                 },
             },
         },
         layout: {
             padding: {
-                bottom: 0,
+                bottom: 20,
             },
         },
         elements: {
             bar: {
-                borderRadius: 4,
+                borderRadius: 5,
                 borderWidth: 2,
             },
-        },
-        hover: {
-            intersect: false,
-            mode: 'index',
-            animationDuration: 400,
-        },
-        animation: {
-            duration: 1000,
         },
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg flex justify-center w-full" style={{ height: '35vh' }}>
-            <div style={{ width: '100%', height: '100%' }}>
+        <div className="bg-white rounded-lg h-44 w-full overflow-x-auto scrollbar-hidden">
+            <div style={{ width: '600px', height: '100%' }}>
                 <Bar data={data} options={options} />
             </div>
         </div>

@@ -1,18 +1,41 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const BarChart = () => {
+const BarChart = ({ selectedYear }) => {
+    const [penjualanData, setPenjualanData] = useState([]);
+
+    useEffect(() => {
+        const fetchPenjualan = async () => {
+            const response = await fetch('/api/penjualan'); //DISINI YA VAL
+            const data = await response.json();
+
+            const yearData = data[selectedYear];
+
+            if (yearData) {
+                const penjualanValues = yearData.map(item => item.penjualan);
+                setPenjualanData(penjualanValues);
+            } else {
+                setPenjualanData([]);
+            }
+        };
+
+        if (selectedYear !== 'Tahun') {
+            fetchPenjualan();
+        }
+    }, [selectedYear]);
+
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
-                label: 'Pendapatan', // Label yang akan ditampilkan di tooltip
-                data: [1000, 2500, 1150, 5000, 4500, 3000, 3300, 4000, 3500, 2220, 3450, 3670],
-                backgroundColor: '#0095FF', // Warna bar
+                label: 'Pendapatan',
+                data: penjualanData,
+                backgroundColor: '#0095FF',
                 borderColor: '#0095FF',
                 borderWidth: 0,
                 barThickness: 7,
@@ -23,17 +46,17 @@ const BarChart = () => {
 
     const options = {
         responsive: true,
-        maintainAspectRatio: false, // Mengizinkan grafik untuk menyesuaikan dengan ukuran container
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false, // Menonaktifkan legenda
+                display: false,
             },
             tooltip: {
                 callbacks: {
                     label: (context) => {
-                        const label = context.dataset.label || ''; // Ambil label dari dataset
-                        const value = context.raw; // Ambil nilai dari tooltip
-                        return label ? `${label}: ${value}` : value; // Format tooltip
+                        const label = context.dataset.label || '';
+                        const value = context.raw;
+                        return label ? `${label}: ${value}` : value;
                     },
                 },
                 intersect: false,
@@ -53,7 +76,7 @@ const BarChart = () => {
                         return data.labels[index];
                     },
                     maxRotation: 0,
-                    padding: 0, // Kurangi padding untuk jarak antara label sumbu X
+                    padding: 0,
                 },
                 grid: {
                     display: false,
@@ -69,21 +92,21 @@ const BarChart = () => {
                     callback: function (value) {
                         return value / 1000 + 'k';
                     },
-                    padding: 5, // Kurangi padding untuk jarak antara label sumbu Y
+                    padding: 5,
                 },
                 grid: {
-                    borderDash: [5, 5], // Garis sumbu Y
+                    borderDash: [5, 5],
                 },
             },
         },
         layout: {
             padding: {
-                bottom: 0, // Mengurangi padding di bawah grafik
+                bottom: 0,
             },
         },
         elements: {
             bar: {
-                borderRadius: 4, // Membuat ujung bar lebih bulat
+                borderRadius: 4,
                 borderWidth: 2,
             },
         },
@@ -98,8 +121,8 @@ const BarChart = () => {
     };
 
     return (
-        <div className="bg-white p-4 rounded-lg flex justify-center w-full" style={{ height: '35vh' }}> {/* Atur tinggi container di sini */}
-            <div style={{ width: '100%', height: '100%' }}> {/* Pastikan tinggi grafik mengikuti tinggi container */}
+        <div className="bg-white p-4 rounded-lg flex justify-center w-full" style={{ height: '35vh' }}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <Bar data={data} options={options} />
             </div>
         </div>

@@ -1,17 +1,40 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-const LineChart = () => {
+const LineChart = ({ selectedYear }) => {
+  const [netProfitData, setNetProfitData] = useState([]);
+
+  useEffect(() => {
+    const fetchNetProfit = async () => {
+      const response = await fetch(`/api/netprofit`);
+      const data = await response.json();
+
+      const yearData = data[selectedYear];
+
+      if (yearData) {
+        const profitValues = yearData.map(item => item.netProfit);
+        setNetProfitData(profitValues);
+      } else {
+        setNetProfitData([]); 
+      }
+    };
+
+    if (selectedYear !== 'Tahun') {
+      fetchNetProfit();
+    }
+  }, [selectedYear]);
+
   const data = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
     datasets: [
       {
-        label: 'Net Profit', // Label yang akan ditampilkan di tooltip
-        data: [50, 100, 150, 100, 200, 300, 330, 400, 350, 222, 345, 367],
+        label: 'Net Profit',
+        data: netProfitData,
         borderColor: '#3CD856',
         backgroundColor: 'rgba(75,192,192,0.2)',
         fill: true,
@@ -24,14 +47,14 @@ const LineChart = () => {
     responsive: true,
     plugins: {
       legend: {
-        display: false, // Menonaktifkan legenda
+        display: false,
       },
       tooltip: {
         callbacks: {
           label: (context) => {
-            const label = context.dataset.label || ''; // Ambil label dari dataset
-            const value = context.raw; // Ambil nilai dari tooltip
-            return label ? `${label}: ${value}` : value; // Format tooltip
+            const label = context.dataset.label || '';
+            const value = context.raw;
+            return label ? `${label}: ${value}` : value;
           },
         },
         intersect: false,
@@ -47,11 +70,11 @@ const LineChart = () => {
             style: 'normal',
             color: '#464E5F',
           },
-          callback: function(value, index) {
+          callback: function (value, index) {
             return data.labels[index];
           },
           maxRotation: 0,
-          padding: 0, // Kurangi padding untuk jarak antara label sumbu X
+          padding: 0,
         },
         grid: {
           display: false,
@@ -63,20 +86,19 @@ const LineChart = () => {
           font: {
             size: 10,
           },
-          stepSize: 100,
+          stepSize: 10000,
           callback: function (value) {
-            return value;
+            return value / 1000 + 'k';
           },
-          padding: 5, // Kurangi padding untuk jarak antara label sumbu Y
         },
         grid: {
-          borderDash: [5, 5], // Garis sumbu Y
+          borderDash: [5, 5],
         },
       },
     },
     layout: {
       padding: {
-        bottom: 0, // Mengurangi padding di bawah grafik
+        bottom: 0,
       },
     },
     elements: {
