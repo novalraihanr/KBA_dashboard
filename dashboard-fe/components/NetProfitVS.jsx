@@ -11,13 +11,13 @@ const BarChart = ({ selectedYear }) => {
 
   useEffect(() => {
     const fetchNetProfit = async () => {
-      const response = await fetch(`/api/netprofit`);
+      const response = await fetch('http://localhost:8080/revenue');
       const data = await response.json();
 
-      const yearData = data[selectedYear];
+      const yearData = data.filter(item => item.tahun == selectedYear);
 
       if (yearData) {
-        const profitValues = yearData.map(item => item.netProfit);
+        const profitValues = yearData.map(item => item.net_profit);
         setNetProfitData(profitValues);
       } else {
         setNetProfitData([]); 

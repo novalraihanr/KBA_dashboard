@@ -11,10 +11,10 @@ const BarChart = ({ selectedYear }) => {
 
     useEffect(() => {
         const fetchPenjualan = async () => {
-            const response = await fetch('/api/penjualan'); //DISINI YA VAL
+            const response = await fetch('http://localhost:8080/penjualan'); //DISINI YA VAL
             const data = await response.json();
 
-            const yearData = data[selectedYear];
+            const yearData = data.filter(item => item.tahun == selectedYear);
 
             if (yearData) {
                 const penjualanValues = yearData.map(item => item.penjualan);

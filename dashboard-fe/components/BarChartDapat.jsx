@@ -11,13 +11,13 @@ const BarChart = ({ selectedYear }) => {
 
     useEffect(() => {
         const fetchPendapatan = async () => {
-            const response = await fetch('/api/pendapatan'); //DISINI YA VAL
+            const response = await fetch('http://localhost:8080/pendapatan'); //DISINI YA VAL
             const data = await response.json();
 
-            const yearData = data[selectedYear];
+            const yearData = data.filter(item => item.tahun == selectedYear);
 
             if (yearData) {
-                const pendapatanValues = yearData.map(item => item.pendapatan);
+                const pendapatanValues = yearData.map(item => item.revenue);
                 setPendapatanData(pendapatanValues);
             } else {
                 setPendapatanData([]);

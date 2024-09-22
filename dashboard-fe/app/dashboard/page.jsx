@@ -24,6 +24,8 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState('Tahun');
   const [selectedMonth, setSelectedMonth] = useState('Bulan');
 
+  const [data, setData] = useState({});
+
   const handleYearSelect = (year) => {
     setSelectedYear(year);
   };
@@ -31,6 +33,12 @@ const Dashboard = () => {
   const handleMonthSelect = (month) => {
     setSelectedMonth(month);
   };
+
+  useEffect(() => {
+    fetch().then(response => response.json()).then(data => setData(data)).catch(error => {
+      console.error(error)
+    })
+  }, [])
 
   return (
     <section className="h-screen flex">
