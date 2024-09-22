@@ -115,8 +115,87 @@ main {
   display: none;
 }
 
-svg path:hover {
-  fill: #F64E60;
+/* CSS MAP */
+#USA, #USA_2, #USA_3, #USA_4, #USA_5, #USA_6, #USA_7, #USA_8, #USA_9, #USA_10 {
+  fill: #FF5733;
+}
+
+#AUS, #AUS_2 {
+  fill: #33FF57;
+}
+
+#NOR, #NOR_2, #NOR_3, #NOR_4 {
+  fill: #3357FF;
+}
+
+#PL {
+  fill: #FF33A1;
+}
+
+#DE {
+  fill: #33FFF5;
+}
+
+#SE {
+  fill: #F5FF33;
+}
+
+#DEN, #DEN_2 {
+  fill: #FFB833;
+}
+
+#PT {
+  fill:#B833FF;
+}
+
+#JPN, #JPN_2, #JPN_3 {
+  fill: #FF3333;
+}
+
+#FI {
+  fill: #33FF33;
+}
+
+#UK, #UK_2 {
+  fill: #3333FF;
+}
+
+#IE {
+  fill: #FF8C00;
+}
+
+#CND, #CND_2, #CND_3, #CND_4, #CND_5, #CND_6, #CND_7, #CND_8, #CND_9, #CND_10
+#CND_11, #CND_12, #CND_13, #CND_14, #CND_15, #CND_16, #CND_17, #CND_18, #CND_19, #CND_20
+#CND_21, #CND_22, #CND_23, #CND_24, #CND_25, #CND_26, #CND_27, #CND_28, #CND_29, #CND_30 {
+  fill: #00FF8C;
+}
+
+#CH {
+  fill: #8C00FF;
+}
+
+#NL, #BQBO, #BQSE, #BQSA {
+  fill: #FF00B8;
+}
+
+#BE {
+  fill: #00B8FF;
+}
+
+#ZA {
+  fill: #B8FF00;
+}
+
+#AT {
+  fill: #FFB800;
+}
+
+#PH, #PH_2, #PH_3, #PH_4, #PH_5, #PH_6, #PH_7 {
+  fill: #8000FF;
+}
+
+#IL {
+  fill: #008CFF;
 }
 
 

@@ -68,7 +68,7 @@ const Dashboard = () => {
       // //     overallPendapatan += month.pendapatan;
       // //   });
       // // }
-      
+
       setTotalPendapatan(overallPendapatan);
 
       if (selectedYear !== 'Tahun') {
@@ -81,18 +81,18 @@ const Dashboard = () => {
 
         const response = await fetch(`http://localhost:8080/pendapatan`);
         const data = await response.json();
-        
+
         const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
           const month = yearData.find(item => item.bulan == monthIndex + 1);
-          if(typeof month !== "undefined"){
+          if (typeof month !== "undefined") {
             const nowMonthIndex = month.bulan;
             // console.log(month)
             if (yearData && month) {
               setPendapatanData(month.revenue);
-  
+
               const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
               // console.log(prevMonth)
               if (prevMonth) {
@@ -103,7 +103,7 @@ const Dashboard = () => {
             } else {
               setPendapatanData(0);
             }
-          }else {
+          } else {
             setPendapatanData(0);
           }
         } else {
@@ -148,17 +148,17 @@ const Dashboard = () => {
 
         const response = await fetch(`http://localhost:8080/penjualan`);
         const data = await response.json();
-        
+
         const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
           const month = yearData.find(item => item.bulan == monthIndex + 1);
-          if(typeof month !== "undefined"){
+          if (typeof month !== "undefined") {
             const nowMonthIndex = month.bulan;
             if (yearData && month) {
               setPenjualanData(month.penjualan);
-  
+
               const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
               if (prevMonth) {
                 setPreviousMonthPenjualan(prevMonth.penjualan);
@@ -168,7 +168,7 @@ const Dashboard = () => {
             } else {
               setPenjualanData(0);
             }
-          }else {
+          } else {
             setPenjualanData(0);
           }
         } else {
@@ -213,17 +213,17 @@ const Dashboard = () => {
 
         const response = await fetch(`http://localhost:8080/revenue`);
         const data = await response.json();
-        
+
         const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
           const month = yearData.find(item => item.bulan == monthIndex + 1);
-          if(typeof month !== "undefined") {
+          if (typeof month !== "undefined") {
             const nowMonthIndex = month.bulan;
             if (yearData && month) {
               setNetProfit(month.net_profit);
-  
+
               const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
               if (monthIndex > 0) {
                 setPreviousMonthProfit(prevMonth.net_profit);
@@ -233,7 +233,7 @@ const Dashboard = () => {
             } else {
               setNetProfit(0);
             }
-          }else {
+          } else {
             setNetProfit(0);
           }
         } else {
@@ -277,18 +277,18 @@ const Dashboard = () => {
 
         const response = await fetch(`http://localhost:8080/customer`);
         const data = await response.json();
-        
+
         const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
           const month = yearData.find(item => item.bulan == monthIndex + 1);
-          if(typeof month !== "undefined") {
+          if (typeof month !== "undefined") {
             const nowMonthIndex = month.bulan;
 
             if (yearData && month) {
               setCustomerData(month.total);
-  
+
               const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
               if (prevMonth) {
                 setPreviousMonthCustomers(prevMonth.total);
@@ -298,7 +298,7 @@ const Dashboard = () => {
             } else {
               setCustomerData(0);
             }
-          }else {
+          } else {
             setCustomerData(0);
           }
         } else {
@@ -356,8 +356,47 @@ const Dashboard = () => {
     fetchTopProducts();
   }, [selectedYear]);
 
+  //INI CUMA LOGIC BUAT POPUP VAL
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ left: 0, top: 0 });
+  const mapRef = useRef(null);
 
+  const handleMouseOver = (event) => {
+    if (mapRef.current) {
+      const rect = mapRef.current.getBoundingClientRect();
+      const offsetX = event.clientX - rect.left;
+      const offsetY = event.clientY - rect.top;
+      setPopupPosition({ left: offsetX + 10, top: offsetY + 10 });
+      setPopupVisible(true);
+    }
+  };
 
+  const handleMouseOut = () => {
+    setPopupVisible(false);
+  };
+
+  //INI DATA MAP NYA (LANGSUNG PENJUALAN KESELURUHAN YA VAL)
+  const [countryData, setCountryData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCountryData = async () => {
+      try {
+        const response = await fetch('/api/country');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setCountryData(data);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCountryData();
+  }, []);
 
   return (
     <section className="h-screen flex">
@@ -823,8 +862,42 @@ const Dashboard = () => {
 
                 <div className="col-span-7 heatmap bg-white p-3 h-full w-full rounded-lg">
                   <p className="font-poppins font-semibold text-[#05004E]">Penjualan Berdasarkan wilayah</p>
-                  <div className="relative w-full h-60">
+                  <div className="relative w-full h-60 " onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} ref={mapRef}>
                     <WorldMap />
+                    {popupVisible && (
+                      <div
+                        className="popup"
+                        style={{
+                          position: 'absolute',
+                          backgroundColor: 'white',
+                          border: '1px solid black',
+                          padding: '10px',
+                          left: `${popupPosition.left}px`,
+                          top: `${popupPosition.top}px`,
+                          zIndex: 1000,
+                          display: 'grid',
+                          gridAutoFlow: 'column',
+                          gridTemplateRows: 'repeat(7, auto)',
+                          gap: '5px 15px',
+                          fontFamily: 'Poppins, sans-serif',
+                          fontSize: '10px',
+                          borderRadius: '8px',
+                          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                          border: 'none',
+                        }}
+                      >
+                        {Object.entries(countryData).map(([country, data], index) => (
+                          <div
+                            key={country}
+                            style={{
+                              marginBottom: '5px',
+                            }}
+                          >
+                            {country}: {data}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                 </div>
