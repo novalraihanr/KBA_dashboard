@@ -49,9 +49,11 @@ const Login = () => {
             </div>
 
             <div className="mr-20 mt-10">
+              <a href="/dashboard">
               <button className="border w-full rounded-2xl bg-custom-green text-white py-3">
                 Sign In
               </button>
+              </a>
             </div>
 
           </div>

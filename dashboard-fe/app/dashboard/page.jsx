@@ -54,38 +54,61 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchPendapatan = async () => {
-      const response = await fetch(`/api/pendapatan`);
-      const data = await response.json();
+      const response_total = await fetch(`http://localhost:8080/pendapatan/totalAll`);
+      const data_total = await response_total.json();
 
-      let overallPendapatan = 0;
-      for (let year of [2003, 2004, 2005]) {
-        const yearData = data[year];
-        yearData.forEach(month => {
-          overallPendapatan += month.pendapatan;
-        });
-      }
+      // const yearData = data_total.filter(item => item.tahun == selectedYear);
+
+      const overallPendapatan = data_total[0].revenue;
+
+      // // let overallPendapatan = 0;
+      // // for (let year of [2003, 2004, 2005]) {
+      // //   const yearData = data[year];
+      // //   yearData.forEach(month => {
+      // //     overallPendapatan += month.pendapatan;
+      // //   });
+      // // }
+      
       setTotalPendapatan(overallPendapatan);
 
       if (selectedYear !== 'Tahun') {
-        const yearData = data[selectedYear];
+
+        const response_total = await fetch(`http://localhost:8080/pendapatan/total`);
+        const data_total = await response_total.json();
+
+        const yearData_total = data_total.filter(item => item.tahun == selectedYear);
+        const overallPendapatan = yearData_total.map(item => item.revenue);
+
+        const response = await fetch(`http://localhost:8080/pendapatan`);
+        const data = await response.json();
+        
+        const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
-          if (yearData && yearData[monthIndex]) {
-            setPendapatanData(yearData[monthIndex].pendapatan);
-
-            if (monthIndex > 0) {
-              setPreviousMonthPendapatan(yearData[monthIndex - 1].pendapatan);
+          const month = yearData.find(item => item.bulan == monthIndex + 1);
+          if(typeof month !== "undefined"){
+            const nowMonthIndex = month.bulan;
+            // console.log(month)
+            if (yearData && month) {
+              setPendapatanData(month.revenue);
+  
+              const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
+              // console.log(prevMonth)
+              if (prevMonth) {
+                setPreviousMonthPendapatan(prevMonth.revenue);
+              } else {
+                setPreviousMonthPendapatan(null);
+              }
             } else {
-              setPreviousMonthPendapatan(null);
+              setPendapatanData(0);
             }
-          } else {
+          }else {
             setPendapatanData(0);
           }
-          setTotalPendapatan(0);
         } else {
-          const total = yearData.reduce((acc, curr) => acc + curr.pendapatan, 0);
-          setTotalPendapatan(total);
+          // const total = yearData.reduce((acc, curr) => acc + curr.pendapatan, 0);
+          setTotalPendapatan(overallPendapatan);
           setPendapatanData(null);
           setPreviousMonthPendapatan(null);
         }
@@ -102,37 +125,55 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchPenjualan = async () => {
-      const response = await fetch(`/api/penjualan`);
+      const response = await fetch(`http://localhost:8080/penjualan/totalAll`);
       const data = await response.json();
 
-      let overallPenjualan = 0;
-      for (let year of [2003, 2004, 2005]) {
-        const yearData = data[year];
-        yearData.forEach(month => {
-          overallPenjualan += month.penjualan;
-        });
-      }
+      const overallPenjualan = data[0].penjualan
+
+      // let overallPenjualan = 0;
+      // for (let year of [2003, 2004, 2005]) {
+      //   const yearData = data[year];
+      //   yearData.forEach(month => {
+      //     overallPenjualan += month.penjualan;
+      //   });
+      // }
       setTotalPenjualan(overallPenjualan);
 
       if (selectedYear !== 'Tahun') {
-        const yearData = data[selectedYear];
+        const response_total = await fetch(`http://localhost:8080/penjualan/total`);
+        const data_total = await response_total.json();
+
+        const yearData_total = data_total.filter(item => item.tahun == selectedYear);
+        const overallPenjualan = yearData_total.map(item => item.penjualan);
+
+        const response = await fetch(`http://localhost:8080/penjualan`);
+        const data = await response.json();
+        
+        const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
-          if (yearData && yearData[monthIndex]) {
-            setPenjualanData(yearData[monthIndex].penjualan);
-
-            if (monthIndex > 0) {
-              setPreviousMonthPenjualan(yearData[monthIndex - 1].penjualan);
+          const month = yearData.find(item => item.bulan == monthIndex + 1);
+          if(typeof month !== "undefined"){
+            const nowMonthIndex = month.bulan;
+            if (yearData && month) {
+              setPenjualanData(month.penjualan);
+  
+              const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
+              if (prevMonth) {
+                setPreviousMonthPenjualan(prevMonth.penjualan);
+              } else {
+                setPreviousMonthPenjualan(null);
+              }
             } else {
-              setPreviousMonthPenjualan(null);
+              setPenjualanData(0);
             }
-          } else {
+          }else {
             setPenjualanData(0);
           }
         } else {
-          const total = yearData.reduce((acc, curr) => acc + curr.penjualan, 0);
-          setTotalPenjualan(total);
+          // const total = yearData.reduce((acc, curr) => acc + curr.penjualan, 0);
+          setTotalPenjualan(overallPenjualan);
           setPenjualanData(null);
           setPreviousMonthPenjualan(null);
         }
@@ -149,39 +190,54 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchNetProfit = async () => {
-      const response = await fetch(`/api/netprofit`);
+      const response = await fetch(`http://localhost:8080/revenue/totalAll`);
       const data = await response.json();
 
-      let overallNetProfit = 0;
-      for (let year of [2003, 2004, 2005]) {
-        const yearData = data[year];
-        yearData.forEach(month => {
-          overallNetProfit += month.netProfit;
-        });
-      }
+      const overallNetProfit = data[0].net_profit
+
+      // let overallNetProfit = 0;
+      // for (let year of [2003, 2004, 2005]) {
+      //   const yearData = data[year];
+      //   yearData.forEach(month => {
+      //     overallNetProfit += month.netProfit;
+      //   });
+      // }
       setTotalNetProfit(overallNetProfit);
 
       if (selectedYear !== 'Tahun') {
-        const yearData = data[selectedYear];
+        const response_total = await fetch(`http://localhost:8080/revenue/total`);
+        const data_total = await response_total.json();
+
+        const yearData_total = data_total.filter(item => item.tahun == selectedYear);
+        const overalNetProfit = yearData_total.map(item => item.net_profit);
+
+        const response = await fetch(`http://localhost:8080/revenue`);
+        const data = await response.json();
+        
+        const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
-          if (yearData && yearData[monthIndex]) {
-            setNetProfit(yearData[monthIndex].netProfit);
-
-            if (monthIndex > 0) {
-              setPreviousMonthProfit(yearData[monthIndex - 1].netProfit);
+          const month = yearData.find(item => item.bulan == monthIndex + 1);
+          if(typeof month !== "undefined") {
+            const nowMonthIndex = month.bulan;
+            if (yearData && month) {
+              setNetProfit(month.net_profit);
+  
+              const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
+              if (monthIndex > 0) {
+                setPreviousMonthProfit(prevMonth.net_profit);
+              } else {
+                setPreviousMonthProfit(null);
+              }
             } else {
-              setPreviousMonthProfit(null);
+              setNetProfit(0);
             }
-          } else {
+          }else {
             setNetProfit(0);
           }
-          setTotalNetProfit(0);
         } else {
-
-          const total = yearData.reduce((acc, curr) => acc + curr.netProfit, 0);
-          setTotalNetProfit(total);
+          setTotalNetProfit(overalNetProfit);
           setNetProfit(null);
           setPreviousMonthProfit(null);
         }
@@ -198,37 +254,55 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      const response = await fetch(`/api/customer`);
+      const response = await fetch(`http://localhost:8080/customer/totalAll`);
       const data = await response.json();
 
-      let overallCustomers = 0;
-      for (let year of [2003, 2004, 2005]) {
-        const yearData = data[year];
-        yearData.forEach(month => {
-          overallCustomers += month.customer;
-        });
-      }
+      const overallCustomers = data[0].total
+
+      // let overallCustomers = 0;
+      // for (let year of [2003, 2004, 2005]) {
+      //   const yearData = data[year];
+      //   yearData.forEach(month => {
+      //     overallCustomers += month.customer;
+      //   });
+      // }
       setTotalCustomers(overallCustomers);
 
       if (selectedYear !== 'Tahun') {
-        const yearData = data[selectedYear];
+        const response_total = await fetch(`http://localhost:8080/customer/total`);
+        const data_total = await response_total.json();
+
+        const yearData_total = data_total.filter(item => item.tahun == selectedYear);
+        const overalUniqueCustomer = yearData_total.map(item => item.total);
+
+        const response = await fetch(`http://localhost:8080/customer`);
+        const data = await response.json();
+        
+        const yearData = data.filter(item => item.tahun == selectedYear);
 
         if (selectedMonth !== 'Bulan') {
           const monthIndex = monthsMap[selectedMonth];
-          if (yearData && yearData[monthIndex]) {
-            setCustomerData(yearData[monthIndex].customer);
+          const month = yearData.find(item => item.bulan == monthIndex + 1);
+          if(typeof month !== "undefined") {
+            const nowMonthIndex = month.bulan;
 
-            if (monthIndex > 0) {
-              setPreviousMonthCustomers(yearData[monthIndex - 1].customer);
+            if (yearData && month) {
+              setCustomerData(month.total);
+  
+              const prevMonth = yearData.find(item => item.bulan == nowMonthIndex - 1);
+              if (prevMonth) {
+                setPreviousMonthCustomers(prevMonth.total);
+              } else {
+                setPreviousMonthCustomers(null);
+              }
             } else {
-              setPreviousMonthCustomers(null);
+              setCustomerData(0);
             }
-          } else {
+          }else {
             setCustomerData(0);
           }
         } else {
-          const total = yearData.reduce((acc, curr) => acc + curr.customer, 0);
-          setTotalCustomers(total);
+          setTotalCustomers(overalUniqueCustomer);
           setCustomerData(null);
           setPreviousMonthCustomers(null);
         }
@@ -250,7 +324,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchTopProducts = async () => {
-      const response = await fetch(`/api/product`);
+      const response = await fetch(`http://localhost:8080/rank`);
       const data = await response.json();
 
       let products = [];
@@ -258,20 +332,21 @@ const Dashboard = () => {
 
       // Ambil produk terlaris dari tahun yang dipilih atau dari semua tahun
       if (selectedYear !== 'Tahun') {
-        products = data[selectedYear]
-          .sort((a, b) => b.penjualan - a.penjualan)
+        products = data.filter(item => item.tahun == selectedYear)
+          .sort((a, b) => b.total - a.total)
           .slice(0, 4);
-        totalPenjualan = data[selectedYear].reduce((acc, curr) => acc + curr.penjualan, 0); // Total penjualan tahun tertentu
+        totalPenjualan = products.reduce((acc, curr) => acc + parseInt(curr.total), 0); // Total penjualan tahun tertentu
       } else {
         // Ambil produk terlaris dari semua tahun
-        const allProducts = [];
-        for (const year in data) {
-          allProducts.push(...data[year]);
-        }
-        products = allProducts
+        // const allProducts = [];
+        // for (const year in data) {
+        //   allProducts.push(...data[year]);
+        // }
+        products = data
           .sort((a, b) => b.penjualan - a.penjualan)
           .slice(0, 4);
-        totalPenjualan = allProducts.reduce((acc, curr) => acc + curr.penjualan, 0); // Total penjualan seluruh tahun
+        console.log(products)
+        totalPenjualan = products.reduce((acc, curr) => acc + parseInt(curr.total), 0); // Total penjualan seluruh tahun
       }
 
       setTopProducts(products);
@@ -319,7 +394,7 @@ const Dashboard = () => {
               <p className="text-xs text-custom-grey font-poppins font-medium pl-2 py-3">Settings</p>
             </div>
           </a>
-          <a href="#">
+          <a href="/">
             <div className="flex justify-start items-center mx-5 rounded-xl mt-3 pl-5">
               <Image src="./assets/icons/iconSignOut.svg" width={20} height={20} />
               <p className="text-xs text-custom-grey font-poppins font-medium pl-2 py-3">Sign Out</p>
@@ -435,8 +510,8 @@ const Dashboard = () => {
                           />
                           <p className="text-sm font-bold font-poppins mt-3">
                             {selectedMonth !== 'Bulan' ?
-                              (pendapatanData ? `$ ${pendapatanData.toLocaleString()}` : 'Rp 0') :
-                              (totalPendapatan ? `$ ${totalPendapatan.toLocaleString()}` : 'Rp 0')}
+                              (pendapatanData ? `$ ${pendapatanData.toLocaleString()}` : '$ 0') :
+                              (totalPendapatan ? `$ ${totalPendapatan.toLocaleString()}` : '$ 0')}
                           </p>
                           <p className="font-poppins text-xxs font-medium text-[#425166]">Total Pendapatan</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
@@ -462,8 +537,8 @@ const Dashboard = () => {
                           />
                           <p className="text-sm font-bold font-poppins mt-3">
                             {selectedMonth !== 'Bulan' ?
-                              (penjualanData ? `$ ${penjualanData.toLocaleString()}` : 'Rp 0') :
-                              (totalPenjualan ? `$ ${totalPenjualan.toLocaleString()}` : 'Rp 0')}
+                              (penjualanData ? `${penjualanData.toLocaleString()}` : '0') :
+                              (totalPenjualan ? `${totalPenjualan.toLocaleString()}` : '0')}
                           </p>
                           <p className="font-poppins text-xxs font-medium text-[#425166]">Total Penjualan</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
@@ -489,8 +564,8 @@ const Dashboard = () => {
                           />
                           <p className="text-sm font-bold font-poppins mt-3">
                             {selectedMonth !== 'Bulan' ?
-                              (netProfit ? `$ ${netProfit.toLocaleString()}` : 'Rp 0') :
-                              (totalNetProfit ? `$ ${totalNetProfit.toLocaleString()}` : 'Rp 0')}
+                              (netProfit ? `$ ${netProfit.toLocaleString()}` : '$ 0') :
+                              (totalNetProfit ? `$ ${totalNetProfit.toLocaleString()}` : '$ 0')}
                           </p>
                           <p className="font-poppins text-xxs font-medium text-[#425166]">Untung Bersih</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]"></p>
@@ -725,13 +800,13 @@ const Dashboard = () => {
                     {topProducts.map((product, index) => {
                       // Hitung persentase penjualan
                       const percentage = totalProducts > 0
-                        ? Math.floor((product.penjualan / totalProducts) * 100)
+                        ? Math.floor((product.total / totalProducts) * 100)
                         : 0;
 
                       return (
                         <div key={index} className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
                           <div className="col-span-1 text-xs">{String(index + 1).padStart(2, '0')}</div>
-                          <div className="col-span-10 text-xs">{product.produk}</div>
+                          <div className="col-span-10 text-xs">{product.productName}</div>
                           <div
                             className="flex justify-center items-center col-span-1 text-xxs border 
           border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
