@@ -43,7 +43,7 @@ const BarChart = ({ selectedYear }) => {
             },
             {
                 label: 'Target Sales',
-                data: [4000, 8000, 12000, 9000, 15000, 28000, 30000, 39000, 34000, 20000, 32000, 35000],
+                data: [2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 9000, 3000],
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,

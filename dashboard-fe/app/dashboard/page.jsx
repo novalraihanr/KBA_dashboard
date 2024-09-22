@@ -23,22 +23,266 @@ const Dashboard = () => {
   //INI BUAT ATUR TAHUN BULAN VAL
   const [selectedYear, setSelectedYear] = useState('Tahun');
   const [selectedMonth, setSelectedMonth] = useState('Bulan');
-
-  const [data, setData] = useState({});
+  const monthsMap = {
+    'Januari': 0,
+    'Februari': 1,
+    'Maret': 2,
+    'April': 3,
+    'Mei': 4,
+    'Juni': 5,
+    'Juli': 6,
+    'Agustus': 7,
+    'September': 8,
+    'Oktober': 9,
+    'November': 10,
+    'Desember': 11,
+  };
 
   const handleYearSelect = (year) => {
     setSelectedYear(year);
+    setSelectedMonth('Bulan');
   };
 
   const handleMonthSelect = (month) => {
     setSelectedMonth(month);
   };
 
+  //INI BUAT PENDAPATAN
+  const [pendapatanData, setPendapatanData] = useState(null);
+  const [totalPendapatan, setTotalPendapatan] = useState(0);
+  const [previousMonthPendapatan, setPreviousMonthPendapatan] = useState(null);
+
   useEffect(() => {
-    fetch().then(response => response.json()).then(data => setData(data)).catch(error => {
-      console.error(error)
-    })
-  }, [])
+    const fetchPendapatan = async () => {
+      const response = await fetch(`/api/pendapatan`);
+      const data = await response.json();
+
+      let overallPendapatan = 0;
+      for (let year of [2003, 2004, 2005]) {
+        const yearData = data[year];
+        yearData.forEach(month => {
+          overallPendapatan += month.pendapatan;
+        });
+      }
+      setTotalPendapatan(overallPendapatan);
+
+      if (selectedYear !== 'Tahun') {
+        const yearData = data[selectedYear];
+
+        if (selectedMonth !== 'Bulan') {
+          const monthIndex = monthsMap[selectedMonth];
+          if (yearData && yearData[monthIndex]) {
+            setPendapatanData(yearData[monthIndex].pendapatan);
+
+            if (monthIndex > 0) {
+              setPreviousMonthPendapatan(yearData[monthIndex - 1].pendapatan);
+            } else {
+              setPreviousMonthPendapatan(null);
+            }
+          } else {
+            setPendapatanData(0);
+          }
+          setTotalPendapatan(0);
+        } else {
+          const total = yearData.reduce((acc, curr) => acc + curr.pendapatan, 0);
+          setTotalPendapatan(total);
+          setPendapatanData(null);
+          setPreviousMonthPendapatan(null);
+        }
+      }
+    };
+
+    fetchPendapatan();
+  }, [selectedYear, selectedMonth]);
+
+  //INI BUAT PENJUALAN
+  const [penjualanData, setPenjualanData] = useState(null);
+  const [totalPenjualan, setTotalPenjualan] = useState(0);
+  const [previousMonthPenjualan, setPreviousMonthPenjualan] = useState(null);
+
+  useEffect(() => {
+    const fetchPenjualan = async () => {
+      const response = await fetch(`/api/penjualan`);
+      const data = await response.json();
+
+      let overallPenjualan = 0;
+      for (let year of [2003, 2004, 2005]) {
+        const yearData = data[year];
+        yearData.forEach(month => {
+          overallPenjualan += month.penjualan;
+        });
+      }
+      setTotalPenjualan(overallPenjualan);
+
+      if (selectedYear !== 'Tahun') {
+        const yearData = data[selectedYear];
+
+        if (selectedMonth !== 'Bulan') {
+          const monthIndex = monthsMap[selectedMonth];
+          if (yearData && yearData[monthIndex]) {
+            setPenjualanData(yearData[monthIndex].penjualan);
+
+            if (monthIndex > 0) {
+              setPreviousMonthPenjualan(yearData[monthIndex - 1].penjualan);
+            } else {
+              setPreviousMonthPenjualan(null);
+            }
+          } else {
+            setPenjualanData(0);
+          }
+        } else {
+          const total = yearData.reduce((acc, curr) => acc + curr.penjualan, 0);
+          setTotalPenjualan(total);
+          setPenjualanData(null);
+          setPreviousMonthPenjualan(null);
+        }
+      }
+    };
+
+    fetchPenjualan();
+  }, [selectedYear, selectedMonth]);
+
+  //INI YANG UNTUNG BERSIH VAL
+  const [netProfit, setNetProfit] = useState(null);
+  const [totalNetProfit, setTotalNetProfit] = useState(0);
+  const [previousMonthProfit, setPreviousMonthProfit] = useState(null);
+
+  useEffect(() => {
+    const fetchNetProfit = async () => {
+      const response = await fetch(`/api/netprofit`);
+      const data = await response.json();
+
+      let overallNetProfit = 0;
+      for (let year of [2003, 2004, 2005]) {
+        const yearData = data[year];
+        yearData.forEach(month => {
+          overallNetProfit += month.netProfit;
+        });
+      }
+      setTotalNetProfit(overallNetProfit);
+
+      if (selectedYear !== 'Tahun') {
+        const yearData = data[selectedYear];
+
+        if (selectedMonth !== 'Bulan') {
+          const monthIndex = monthsMap[selectedMonth];
+          if (yearData && yearData[monthIndex]) {
+            setNetProfit(yearData[monthIndex].netProfit);
+
+            if (monthIndex > 0) {
+              setPreviousMonthProfit(yearData[monthIndex - 1].netProfit);
+            } else {
+              setPreviousMonthProfit(null);
+            }
+          } else {
+            setNetProfit(0);
+          }
+          setTotalNetProfit(0);
+        } else {
+
+          const total = yearData.reduce((acc, curr) => acc + curr.netProfit, 0);
+          setTotalNetProfit(total);
+          setNetProfit(null);
+          setPreviousMonthProfit(null);
+        }
+      }
+    };
+
+    fetchNetProfit();
+  }, [selectedYear, selectedMonth]);
+
+  //INI BUAT UNIQUE CUSTOMER
+  const [customerData, setCustomerData] = useState(null);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [previousMonthCustomers, setPreviousMonthCustomers] = useState(null);
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const response = await fetch(`/api/customer`);
+      const data = await response.json();
+
+      let overallCustomers = 0;
+      for (let year of [2003, 2004, 2005]) {
+        const yearData = data[year];
+        yearData.forEach(month => {
+          overallCustomers += month.customer;
+        });
+      }
+      setTotalCustomers(overallCustomers);
+
+      if (selectedYear !== 'Tahun') {
+        const yearData = data[selectedYear];
+
+        if (selectedMonth !== 'Bulan') {
+          const monthIndex = monthsMap[selectedMonth];
+          if (yearData && yearData[monthIndex]) {
+            setCustomerData(yearData[monthIndex].customer);
+
+            if (monthIndex > 0) {
+              setPreviousMonthCustomers(yearData[monthIndex - 1].customer);
+            } else {
+              setPreviousMonthCustomers(null);
+            }
+          } else {
+            setCustomerData(0);
+          }
+        } else {
+          const total = yearData.reduce((acc, curr) => acc + curr.customer, 0);
+          setTotalCustomers(total);
+          setCustomerData(null);
+          setPreviousMonthCustomers(null);
+        }
+      }
+    };
+
+    fetchCustomers();
+  }, [selectedYear, selectedMonth]);
+
+  //HIRAUKAN INI CUMA BUAT CARI PERSEN
+  const calculateChangePercentage = (current, previous) => {
+    if (previous === null || previous === 0) return 0;
+    return Math.round(((current - previous) / previous) * 100);
+  };
+
+  //INI BUAT TOP PRODUCT
+  const [topProducts, setTopProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0); // Ubah ini untuk menyimpan total penjualan
+
+  useEffect(() => {
+    const fetchTopProducts = async () => {
+      const response = await fetch(`/api/product`);
+      const data = await response.json();
+
+      let products = [];
+      let totalPenjualan = 0; // Variabel untuk menghitung total penjualan
+
+      // Ambil produk terlaris dari tahun yang dipilih atau dari semua tahun
+      if (selectedYear !== 'Tahun') {
+        products = data[selectedYear]
+          .sort((a, b) => b.penjualan - a.penjualan)
+          .slice(0, 4);
+        totalPenjualan = data[selectedYear].reduce((acc, curr) => acc + curr.penjualan, 0); // Total penjualan tahun tertentu
+      } else {
+        // Ambil produk terlaris dari semua tahun
+        const allProducts = [];
+        for (const year in data) {
+          allProducts.push(...data[year]);
+        }
+        products = allProducts
+          .sort((a, b) => b.penjualan - a.penjualan)
+          .slice(0, 4);
+        totalPenjualan = allProducts.reduce((acc, curr) => acc + curr.penjualan, 0); // Total penjualan seluruh tahun
+      }
+
+      setTopProducts(products);
+      setTotalProducts(totalPenjualan); // Simpan total penjualan ke state
+    };
+
+    fetchTopProducts();
+  }, [selectedYear]);
+
+
+
 
   return (
     <section className="h-screen flex">
@@ -153,7 +397,7 @@ const Dashboard = () => {
                           <DropdownMenuItem onClick={() => handleMonthSelect('September')}>September</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleMonthSelect('Oktober')}>Oktober</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleMonthSelect('November')}>November</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleMonthSelect('Desembar')}>Desember</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleMonthSelect('Desember')}>Desember</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
 
@@ -189,10 +433,22 @@ const Dashboard = () => {
                             src="/assets/icons/Icon-3.svg" width={30} height={30}
                             className=""
                           />
-                          <p className="text-sm font-bold font-poppins mt-3">Rp 5 Miliar</p>
+                          <p className="text-sm font-bold font-poppins mt-3">
+                            {selectedMonth !== 'Bulan' ?
+                              (pendapatanData ? `$ ${pendapatanData.toLocaleString()}` : 'Rp 0') :
+                              (totalPendapatan ? `$ ${totalPendapatan.toLocaleString()}` : 'Rp 0')}
+                          </p>
                           <p className="font-poppins text-xxs font-medium text-[#425166]">Total Pendapatan</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
-                            + 8% dari bulan lalu
+                            {selectedMonth !== 'Januari' && selectedMonth !== 'Bulan' && previousMonthPendapatan !== null && (
+                              <span>
+                                {pendapatanData > previousMonthPendapatan ?
+                                  `+${calculateChangePercentage(pendapatanData, previousMonthPendapatan)}% dari bulan lalu` :
+                                  (pendapatanData < previousMonthPendapatan ?
+                                    `${calculateChangePercentage(pendapatanData, previousMonthPendapatan)}% dari bulan lalu` :
+                                    '')}
+                              </span>
+                            )}
                           </p>
                         </div>
                       </div>
@@ -204,10 +460,22 @@ const Dashboard = () => {
                             src="/assets/icons/Icon-2.svg" width={30} height={30}
                             className=""
                           />
-                          <p className="text-sm font-bold font-poppins mt-3">300 kali</p>
-                          <p className="font-poppins text-xxs font-medium text-[#425166]">Total Pesanan</p>
+                          <p className="text-sm font-bold font-poppins mt-3">
+                            {selectedMonth !== 'Bulan' ?
+                              (penjualanData ? `$ ${penjualanData.toLocaleString()}` : 'Rp 0') :
+                              (totalPenjualan ? `$ ${totalPenjualan.toLocaleString()}` : 'Rp 0')}
+                          </p>
+                          <p className="font-poppins text-xxs font-medium text-[#425166]">Total Penjualan</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
-                            + 5% dari bulan lalu
+                            {selectedMonth !== 'Januari' && selectedMonth !== 'Bulan' && previousMonthPenjualan !== null && (
+                              <p className="text-[#4079ED] font-poppins text-[8px]">
+                                {penjualanData > previousMonthPenjualan ?
+                                  `+${calculateChangePercentage(penjualanData, previousMonthPenjualan)}% dari bulan lalu` :
+                                  (penjualanData < previousMonthPenjualan ?
+                                    `${calculateChangePercentage(penjualanData, previousMonthPenjualan)}% dari bulan lalu` :
+                                    '')}
+                              </p>
+                            )}
                           </p>
                         </div>
                       </div>
@@ -219,11 +487,22 @@ const Dashboard = () => {
                             src="/assets/icons/Icon-1.svg" width={30} height={30}
                             className=""
                           />
-                          <p className="text-sm font-bold font-poppins mt-3">Rp 5 juta</p>
-                          <p className="font-poppins text-xxs font-medium text-[#425166]">Untung Bersih</p>
-                          <p className="text-[#4079ED] font-poppins text-[8px]">
-                            + 1,2% dari bulan lalu
+                          <p className="text-sm font-bold font-poppins mt-3">
+                            {selectedMonth !== 'Bulan' ?
+                              (netProfit ? `$ ${netProfit.toLocaleString()}` : 'Rp 0') :
+                              (totalNetProfit ? `$ ${totalNetProfit.toLocaleString()}` : 'Rp 0')}
                           </p>
+                          <p className="font-poppins text-xxs font-medium text-[#425166]">Untung Bersih</p>
+                          <p className="text-[#4079ED] font-poppins text-[8px]"></p>
+                          {selectedMonth !== 'Januari' && selectedMonth !== 'Bulan' && previousMonthProfit !== null && (
+                            <p className="text-[#4079ED] font-poppins text-[8px]">
+                              {netProfit > previousMonthProfit ?
+                                `+${calculateChangePercentage(netProfit, previousMonthProfit)}% dari bulan lalu` :
+                                (netProfit < previousMonthProfit ?
+                                  `${calculateChangePercentage(netProfit, previousMonthProfit)}% dari bulan lalu` :
+                                  '')}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -234,10 +513,22 @@ const Dashboard = () => {
                             src="/assets/icons/Icon.svg" width={30} height={30}
                             className=""
                           />
-                          <p className="text-sm font-bold font-poppins mt-3">8</p>
-                          <p className="font-poppins text-xxs font-medium text-[#425166]">Pelanggan Baru</p>
+                          <p className="text-sm font-bold font-poppins mt-3">
+                            {selectedMonth !== 'Bulan' ?
+                              (customerData ? `${customerData.toLocaleString()}` : '0 customers') :
+                              (totalCustomers ? `${totalCustomers.toLocaleString()}` : '0 customers')}
+                          </p>
+                          <p className="font-poppins text-xxs font-medium text-[#425166]">Unique Customer</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
-                            + 0,5% dari bulan lalu
+                            {selectedMonth !== 'Januari' && selectedMonth !== 'Bulan' && previousMonthCustomers !== null && (
+                              <p className="text-[#4079ED] font-poppins text-[8px]">
+                                {customerData > previousMonthCustomers ?
+                                  `+${calculateChangePercentage(customerData, previousMonthCustomers)}% dari bulan lalu` :
+                                  (customerData < previousMonthCustomers ?
+                                    `${calculateChangePercentage(customerData, previousMonthCustomers)}% dari bulan lalu` :
+                                    '')}
+                              </p>
+                            )}
                           </p>
                         </div>
                       </div>
@@ -281,7 +572,8 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-40 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">8.823
+                          className="w-40 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          {totalPendapatan.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -295,7 +587,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-40 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">12.122
+                          className="w-40 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">4,800,000
                         </p>
                       </div>
                     </div>
@@ -321,7 +613,8 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">8.823
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          {totalPenjualan.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -335,7 +628,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">12.122
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">55,000
                         </p>
                       </div>
                     </div>
@@ -356,7 +649,8 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-36 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">8.823
+                          className="w-36 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          {totalCustomers.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -370,7 +664,8 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-36 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">12.122
+                          className="w-36 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">
+                          45
                         </p>
                       </div>
                     </div>
@@ -391,7 +686,8 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">8.823
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          {totalNetProfit.toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -405,7 +701,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">12.122
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FFA412] text-sm">1,900,000
                         </p>
                       </div>
                     </div>
@@ -425,44 +721,31 @@ const Dashboard = () => {
                       <div className="col-span-10 text-xxs">Name</div>
                       <div className="flex justify-end col-span-1 text-xxs">Sales</div>
                     </div>
-                    <div className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
-                      <div className="col-span-1 text-xs">01</div>
-                      <div className="col-span-10 text-xs">Home Decor Range</div>
-                      <div
-                        className="flex justify-center items-center col-span-1 text-xxs border 
-                        border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
-                        45%
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
-                      <div className="col-span-1 text-xs">02</div>
-                      <div className="col-span-10 text-xs">Disney Princess Pink Bag 18'</div>
-                      <div
-                        className="flex justify-center items-center col-span-1 text-xxs border 
-                        border-[#00E58F] bg-[#F0FDF4] rounded-sm text-[#00E58F]">
-                        29%
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
-                      <div className="col-span-1 text-xs">03</div>
-                      <div className="col-span-10 text-xs">Bathroom Essentials</div>
-                      <div
-                        className="flex justify-center items-center col-span-1 text-xxs border 
-                        border-[#884DFF] bg-[#FBF1FF] rounded-sm text-[#884DFF]">
-                        18%
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-12 text-[#444A6D] pb-3 mt-3">
-                      <div className="col-span-1 text-xs">04</div>
-                      <div className="col-span-10 text-xs">Apple Smartwatches</div>
-                      <div
-                        className="flex justify-center items-center col-span-1 text-xxs border 
-                        border-[#FF8900] bg-[#FEF6E6] rounded-sm text-[#FF8900]">
-                        25%
-                      </div>
-                    </div>
+
+                    {topProducts.map((product, index) => {
+                      // Hitung persentase penjualan
+                      const percentage = totalProducts > 0
+                        ? Math.floor((product.penjualan / totalProducts) * 100)
+                        : 0;
+
+                      return (
+                        <div key={index} className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
+                          <div className="col-span-1 text-xs">{String(index + 1).padStart(2, '0')}</div>
+                          <div className="col-span-10 text-xs">{product.produk}</div>
+                          <div
+                            className="flex justify-center items-center col-span-1 text-xxs border 
+          border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
+                            {percentage}%
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
+
+
+
                 </div>
+
                 <div className="col-span-7 heatmap bg-white p-3 h-full w-full rounded-lg">
                   <p className="font-poppins font-semibold text-[#05004E]">Penjualan Berdasarkan wilayah</p>
                   <div className="relative w-full h-60">

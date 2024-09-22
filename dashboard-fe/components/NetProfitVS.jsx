@@ -43,7 +43,7 @@ const BarChart = ({ selectedYear }) => {
             },
             {
                 label: 'Target Profit',
-                data: [4000, 8000, 12000, 9000, 15000, 28000, 30000, 39000, 34000, 20000, 32000, 35000],
+                data: [50000,52500,55000,57500,60000,62500,65000,67500,70000,72500,150000,75000],
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,
