@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 8080
 
-const { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct } = require ('./controller/olapController')
+const { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun } = require ('./controller/olapController')
 
 app.get('/', (req, res) => {
     res.send('Test')
@@ -72,6 +72,11 @@ app.get('/customer/totalAll', async (req, res) => {
 
 app.get('/rank', async (req, res) => {
     const results = await rankProduct()
+    res.json(results[0])
+})
+
+app.get('/country', async (req, res) => {
+    const results = await countryPejualanTahun()
     res.json(results[0])
 })
 

@@ -43,7 +43,7 @@ const BarChart = ({ selectedYear }) => {
             },
             {
                 label: 'Target Customer',
-                data: [1,1,1,1,1,1,1,1,1,1,3,1],
+                data: [2,3,2,4,5,2,5,6,4,2,8,4],
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,

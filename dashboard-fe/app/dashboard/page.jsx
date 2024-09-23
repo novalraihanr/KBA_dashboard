@@ -11,6 +11,7 @@ import UniqueCustVS from '@components/UniqueCustVS';
 import NetProfitVS from '@components/NetProfitVS';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useRef } from 'react';
 
 import {
   DropdownMenu,
@@ -75,7 +76,7 @@ const Dashboard = () => {
 
         const response_total = await fetch(`http://localhost:8080/pendapatan/total`);
         const data_total = await response_total.json();
-
+        
         const yearData_total = data_total.filter(item => item.tahun == selectedYear);
         const overallPendapatan = yearData_total.map(item => item.revenue);
 
@@ -382,7 +383,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCountryData = async () => {
       try {
-        const response = await fetch('/api/country');
+        const response = await fetch('http://localhost:8080/country');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -629,8 +630,8 @@ const Dashboard = () => {
                           />
                           <p className="text-sm font-bold font-poppins mt-3">
                             {selectedMonth !== 'Bulan' ?
-                              (customerData ? `${customerData.toLocaleString()}` : '0 customers') :
-                              (totalCustomers ? `${totalCustomers.toLocaleString()}` : '0 customers')}
+                              (customerData ? `${customerData.toLocaleString()}` : '0') :
+                              (totalCustomers ? `${totalCustomers.toLocaleString()}` : '0')}
                           </p>
                           <p className="font-poppins text-xxs font-medium text-[#425166]">Unique Customer</p>
                           <p className="text-[#4079ED] font-poppins text-[8px]">
@@ -686,7 +687,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-40 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          className="w-40 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
                           {totalPendapatan.toLocaleString()}
                         </p>
                       </div>
@@ -727,7 +728,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
                           {totalPenjualan.toLocaleString()}
                         </p>
                       </div>
@@ -800,7 +801,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
                           {totalNetProfit.toLocaleString()}
                         </p>
                       </div>
@@ -886,15 +887,25 @@ const Dashboard = () => {
                           border: 'none',
                         }}
                       >
-                        {Object.entries(countryData).map(([country, data], index) => (
+                        {/* {Object.entries(countryData).map(([country, total], index) => (
                           <div
                             key={country}
                             style={{
                               marginBottom: '5px',
                             }}
                           >
-                            {country}: {data}
+                            {country}: {total}
                           </div>
+                        ))} */}
+                        {countryData.map((item, index) => (
+                          <div
+                          key={index}
+                          style={{
+                            marginBottom: '5px',
+                          }}
+                        >
+                          {item.country}: {item.total}
+                        </div>
                         ))}
                       </div>
                     )}

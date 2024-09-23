@@ -130,4 +130,14 @@ async function rankProduct(){
     }
 }
 
-module.exports = { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct }
+async function countryPejualanTahun(){
+    try {
+        const result = (await db).query('SELECT c.country , SUM(od.quantityOrdered) as total  FROM facts f INNER JOIN dim_order_detail od ON od.sk_order_detail = f.sk_order_detail INNER JOIN dim_customer c ON c.sk_customer = f.sk_customer GROUP BY c.country')
+        return result
+    } catch (error) {
+        console.error(error)
+        return null
+    }
+}
+
+module.exports = { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun }

@@ -43,7 +43,7 @@ const BarChart = ({ selectedYear }) => {
             },
             {
                 label: 'Target Income',
-                data: [100000,110000,120000,130000,140000,150000,160000,170000,180000,190000,800000,210000],
+                data: [30000,35000,40000,45000,50000,55000,60000,65000,75000,80000,150000,110000],
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,
