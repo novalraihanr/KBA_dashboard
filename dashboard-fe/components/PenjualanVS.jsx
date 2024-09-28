@@ -29,36 +29,38 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
+    const targetPenjualan = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 25000, 7500];
+
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
                 label: 'Reality Sales',
                 data: penjualanData,
-                backgroundColor: '#4AB58E',
-                borderColor: '#4AB58E',
+                backgroundColor: penjualanData.map((value, index) => value < targetPenjualan[index] ? '#FF0000' : '#4AB58E'),
+                borderColor: penjualanData.map((value, index) => value < targetPenjualan[index] ? '#FF0000' : '#4AB58E'),
                 borderWidth: 1,
-                borderRadius: 5, 
-                barThickness: 20,  
+                borderRadius: 5,
+                barThickness: 20,
             },
             {
                 label: 'Target Sales',
-                data: [1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 9000, 2000],
+                data: targetPenjualan,
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,
-                borderRadius: 5, 
-                barThickness: 20,  
+                borderRadius: 5,
+                barThickness: 20,
             },
         ],
     };
 
     const options = {
         responsive: true,
-        maintainAspectRatio: false, 
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false, 
+                display: false,
             },
             tooltip: {
                 callbacks: {
@@ -78,9 +80,9 @@ const BarChart = ({ selectedYear }) => {
         },
         scales: {
             x: {
-                display: true, 
+                display: true,
                 grid: {
-                    display: false, 
+                    display: false,
                 },
                 ticks: {
                     font: {
@@ -88,24 +90,24 @@ const BarChart = ({ selectedYear }) => {
                         color: '#464E5F',
                     },
                     maxRotation: 0,
-                    autoSkip: false, 
+                    autoSkip: false,
                 },
                 border: {
-                    display: false, 
+                    display: false,
                 },
-                barPercentage: 0.9, 
-                categoryPercentage: 1, 
+                barPercentage: 0.9,
+                categoryPercentage: 1,
             },
             y: {
-                display: false, 
+                display: false,
                 grid: {
-                    display: false, 
+                    display: false,
                 },
             },
         },
         layout: {
             padding: {
-                bottom: 20, 
+                bottom: 20,
             },
         },
         elements: {
@@ -118,7 +120,7 @@ const BarChart = ({ selectedYear }) => {
 
     return (
         <div className="bg-white rounded-lg h-44 w-full overflow-x-auto scrollbar-hidden">
-            <div style={{ width: '600px', height: '100%' }}> 
+            <div style={{ width: '600px', height: '100%' }}>
                 <Bar data={data} options={options} />
             </div>
         </div>

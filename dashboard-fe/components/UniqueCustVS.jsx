@@ -29,21 +29,23 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
+    const targetCustomer = [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 5];
+
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
                 label: 'Customer Count',
                 data: customerData,
-                backgroundColor: '#4AB58E',
-                borderColor: '#4AB58E',
+                backgroundColor: customerData.map((value, index) => value < targetCustomer[index] ? '#FF0000' : '#4AB58E'),
+                borderColor: customerData.map((value, index) => value < targetCustomer[index] ? '#FF0000' : '#4AB58E'),
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,
             },
             {
                 label: 'Target Customer',
-                data: [2,3,2,4,5,2,5,6,4,2,8,4],
+                data: targetCustomer,
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,

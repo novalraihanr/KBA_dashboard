@@ -76,7 +76,7 @@ const Dashboard = () => {
 
         const response_total = await fetch(`http://localhost:8080/pendapatan/total`);
         const data_total = await response_total.json();
-        
+
         const yearData_total = data_total.filter(item => item.tahun == selectedYear);
         const overallPendapatan = yearData_total.map(item => item.revenue);
 
@@ -399,6 +399,50 @@ const Dashboard = () => {
     fetchCountryData();
   }, []);
 
+  //INI SEARCH VAL SEMANGAT
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [warningMessage, setWarningMessage] = useState('');
+
+
+  const handleSearch = async (event) => {
+    if (event.key === 'Enter') {
+      if (!searchInput.trim()) {
+        setWarningMessage('Masukkan nama produk');
+        return;
+      }
+
+      const response = await fetch(`/api/product`);
+      const data = await response.json();
+      let allProducts = [];
+
+      if (selectedYear !== 'Tahun') {
+        allProducts = data[selectedYear];
+      } else {
+        for (const year in data) {
+          allProducts.push(...data[year]);
+        }
+      }
+
+      const filtered = allProducts.filter(product =>
+        product.produk.toLowerCase().includes(searchInput.toLowerCase())
+      );
+
+      setFilteredProducts(filtered);
+      setWarningMessage('');
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchInput(value);
+
+    if (!value.trim()) {
+      setFilteredProducts([]);
+      setWarningMessage('');
+    }
+  };
+
   return (
     <section className="h-screen flex">
 
@@ -687,7 +731,13 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-40 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
+                          className={`w-40 flex items-center justify-center text-center font-poppins text-sm ${totalPendapatan > 5000000
+                            ? 'text-[#27AE60]'
+                            : totalPendapatan >= 4800000 && totalPendapatan <= 5000000
+                              ? 'text-[#FFA412]'
+                              : 'text-red-500'
+                            }`}
+                        >
                           {totalPendapatan.toLocaleString()}
                         </p>
                       </div>
@@ -728,7 +778,13 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
+                          className={`w-44 flex items-center justify-center text-center font-poppins text-sm ${totalPenjualan > 60000
+                            ? "text-[#27AE60]"
+                            : totalPenjualan >= 55000
+                              ? "text-[#FFA412]"
+                              : "text-red-500"
+                            }`}
+                        >
                           {totalPenjualan.toLocaleString()}
                         </p>
                       </div>
@@ -764,7 +820,13 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-36 flex items-center justify-center text-center font-poppins text-[#27AE60] text-sm">
+                          className={`w-36 flex items-center justify-center text-center font-poppins text-sm ${totalCustomers > 50
+                            ? 'text-[#27AE60]'
+                            : totalCustomers >= 45 && totalCustomers <= 50
+                              ? 'text-[#FFA412]'
+                              : 'text-red-500'
+                            }`}
+                        >
                           {totalCustomers.toLocaleString()}
                         </p>
                       </div>
@@ -801,7 +863,10 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className="w-44 flex items-center justify-center text-center font-poppins text-[#FF0000] text-sm">
+                          className={`w-44 flex items-center justify-center text-center font-poppins text-sm 
+                            ${totalNetProfit > 2000000 ? 'text-[#27AE60]' :
+                              totalNetProfit >= 1900000 && totalNetProfit <= 2000000 ? 'text-[#FFA412]' :
+                                'text-red-500'}`}>
                           {totalNetProfit.toLocaleString()}
                         </p>
                       </div>
@@ -829,45 +894,59 @@ const Dashboard = () => {
             <div className="row-span-3">
               <div className="grid grid-cols-12 gap-x-3">
                 <div className="col-span-5 bg-white rounded-lg p-3">
-                  <p className="text-[#05004E] font-poppins font-semibold">Top Products</p>
-                  <div className="grid grid-rows-5 mt-2 font-poppins">
+                  <div className="flex justify-between">
+                    <p className="text-[#05004E] font-poppins font-semibold">Top Products</p>
+                    <input
+                      type="text"
+                      placeholder="Search Products"
+                      className="rounded-lg text-xs border-corner-grey"
+                      value={searchInput}
+                      onChange={handleInputChange}
+                      onKeyDown={handleSearch}
+                    />
+                  </div>
+
+                  {warningMessage && <p className="text-red-500 text-xs text-end">{warningMessage}</p>}
+
+                  <div className={`grid mt-2 font-poppins ${filteredProducts.length > 4 ? 'max-h-48 overflow-y-scroll' : ''}`}>
                     <div className="grid grid-cols-12 text-[#96A5B8] border-b pt-4">
                       <div className="col-span-1 text-xxs">#</div>
                       <div className="col-span-10 text-xxs">Name</div>
-                      <div className="flex justify-end col-span-1 text-xxs">Sales</div>
+
+                      {filteredProducts.length === 0 && (
+                        <div className="flex justify-end col-span-1 text-xxs">Sales</div>
+                      )}
                     </div>
 
-                    {topProducts.map((product, index) => {
-                      // Hitung persentase penjualan
+                    {(filteredProducts.length > 0 ? filteredProducts : topProducts).map((product, index) => {
                       const percentage = totalProducts > 0
-                        ? Math.floor((product.total / totalProducts) * 100)
+                        ? Math.floor((product.penjualan / totalProducts) * 100)
                         : 0;
 
                       return (
                         <div key={index} className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
                           <div className="col-span-1 text-xs">{String(index + 1).padStart(2, '0')}</div>
-                          <div className="col-span-10 text-xs">{product.productName}</div>
-                          <div
-                            className="flex justify-center items-center col-span-1 text-xxs border 
-          border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
-                            {percentage}%
-                          </div>
+                          <div className="col-span-10 text-xs">{product.produk}</div>
+
+                          {filteredProducts.length === 0 && (
+                            <div className="flex justify-center items-center col-span-1 text-xxs border border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
+                              {percentage}%
+                            </div>
+                          )}
                         </div>
                       );
                     })}
                   </div>
-
-
-
                 </div>
+
 
                 <div className="col-span-7 heatmap bg-white p-3 h-full w-full rounded-lg">
                   <p className="font-poppins font-semibold text-[#05004E]">Penjualan Berdasarkan wilayah</p>
-                  <div className="relative w-full h-60 " onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} ref={mapRef}>
+                  <div className="relative w-full h-60 overflow-hidden" onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} ref={mapRef}>
                     <WorldMap />
                     {popupVisible && (
                       <div
-                        className="popup"
+                        className="popup overflow-hidden"
                         style={{
                           position: 'absolute',
                           backgroundColor: 'white',
@@ -887,30 +966,19 @@ const Dashboard = () => {
                           border: 'none',
                         }}
                       >
-                        {/* {Object.entries(countryData).map(([country, total], index) => (
+                        {Object.entries(countryData).map(([country, data], index) => (
                           <div
                             key={country}
                             style={{
                               marginBottom: '5px',
                             }}
                           >
-                            {country}: {total}
+                            {country}: {data}
                           </div>
-                        ))} */}
-                        {countryData.map((item, index) => (
-                          <div
-                          key={index}
-                          style={{
-                            marginBottom: '5px',
-                          }}
-                        >
-                          {item.country}: {item.total}
-                        </div>
                         ))}
                       </div>
                     )}
                   </div>
-
                 </div>
               </div>
             </div>

@@ -9,25 +9,27 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 const BarChart = ({ selectedYear }) => {
     const [netProfitData, setNetProfitData] = useState([]);
 
-  useEffect(() => {
-    const fetchNetProfit = async () => {
-      const response = await fetch('http://localhost:8080/revenue');
-      const data = await response.json();
+    useEffect(() => {
+        const fetchNetProfit = async () => {
+            const response = await fetch('http://localhost:8080/revenue');
+            const data = await response.json();
 
-      const yearData = data.filter(item => item.tahun == selectedYear);
+            const yearData = data.filter(item => item.tahun == selectedYear);
 
-      if (yearData) {
-        const profitValues = yearData.map(item => item.net_profit);
-        setNetProfitData(profitValues);
-      } else {
-        setNetProfitData([]); 
-      }
-    };
+            if (yearData) {
+                const profitValues = yearData.map(item => item.net_profit);
+                setNetProfitData(profitValues);
+            } else {
+                setNetProfitData([]);
+            }
+        };
 
-    if (selectedYear !== 'Tahun') {
-      fetchNetProfit();
-    }
-  }, [selectedYear]);
+        if (selectedYear !== 'Tahun') {
+            fetchNetProfit();
+        }
+    }, [selectedYear]);
+
+    const targetProfit = [150000, 170000, 170000, 180000, 190000, 200000, 200000, 200000, 220000, 220000, 360000, 240000];
 
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
@@ -35,30 +37,30 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Actual Profit',
                 data: netProfitData,
-                backgroundColor: '#4AB58E',
-                borderColor: '#4AB58E',
+                backgroundColor: netProfitData.map((value, index) => value < targetProfit[index] ? '#FF0000' : '#4AB58E'),
+                borderColor: netProfitData.map((value, index) => value < targetProfit[index] ? '#FF0000' : '#4AB58E'),
                 borderWidth: 1,
-                borderRadius: 5, 
-                barThickness: 20,  
+                borderRadius: 5,
+                barThickness: 20,
             },
             {
                 label: 'Target Profit',
-                data: [40000,50500,55000,56000,57000,58000,65000,67500,70000,72500,150000,75000],
+                data: targetProfit,
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,
-                borderRadius: 5, 
-                barThickness: 20,  
+                borderRadius: 5,
+                barThickness: 20,
             },
         ],
     };
 
     const options = {
         responsive: true,
-        maintainAspectRatio: false, 
+        maintainAspectRatio: false,
         plugins: {
             legend: {
-                display: false, 
+                display: false,
             },
             tooltip: {
                 callbacks: {
@@ -78,9 +80,9 @@ const BarChart = ({ selectedYear }) => {
         },
         scales: {
             x: {
-                display: true, 
+                display: true,
                 grid: {
-                    display: false, 
+                    display: false,
                 },
                 ticks: {
                     font: {
@@ -88,24 +90,24 @@ const BarChart = ({ selectedYear }) => {
                         color: '#464E5F',
                     },
                     maxRotation: 0,
-                    autoSkip: false, 
+                    autoSkip: false,
                 },
                 border: {
-                    display: false, 
+                    display: false,
                 },
-                barPercentage: 0.9, 
-                categoryPercentage: 1, 
+                barPercentage: 0.9,
+                categoryPercentage: 1,
             },
             y: {
-                display: false, 
+                display: false,
                 grid: {
-                    display: false, 
+                    display: false,
                 },
             },
         },
         layout: {
             padding: {
-                bottom: 20, 
+                bottom: 20,
             },
         },
         elements: {
@@ -118,7 +120,7 @@ const BarChart = ({ selectedYear }) => {
 
     return (
         <div className="bg-white rounded-lg h-44 w-full overflow-x-auto scrollbar-hidden">
-            <div style={{ width: '600px', height: '100%' }}> 
+            <div style={{ width: '600px', height: '100%' }}>
                 <Bar data={data} options={options} />
             </div>
         </div>

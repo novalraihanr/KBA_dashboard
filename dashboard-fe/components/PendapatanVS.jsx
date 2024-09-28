@@ -29,21 +29,23 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
+    const targetPendapatan = [410000, 420000, 430000, 440000, 450000, 460000, 470000, 480000, 490000, 500000, 600000, 450000];
+
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
                 label: 'Actial Income',
                 data: pendapatanData,
-                backgroundColor: '#4AB58E',
-                borderColor: '#4AB58E',
+                backgroundColor: pendapatanData.map((value, index) => value < targetPendapatan[index] ? '#FF0000' : '#4AB58E'),
+                borderColor: pendapatanData.map((value, index) => value < targetPendapatan[index] ? '#FF0000' : '#4AB58E'),
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,
             },
             {
                 label: 'Target Income',
-                data: [30000,35000,40000,45000,50000,55000,60000,65000,75000,80000,150000,110000],
+                data: targetPendapatan,
                 backgroundColor: '#FFCF00',
                 borderColor: '#FFCF00',
                 borderWidth: 1,
