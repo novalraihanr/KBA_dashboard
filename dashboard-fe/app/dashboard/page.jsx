@@ -389,6 +389,7 @@ const Dashboard = () => {
         }
         const data = await response.json();
         setCountryData(data);
+
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
@@ -412,22 +413,23 @@ const Dashboard = () => {
         return;
       }
 
-      const response = await fetch(`/api/product`);
+      const response = await fetch(`http://localhost:8080/rank`);
       const data = await response.json();
+
       let allProducts = [];
 
       if (selectedYear !== 'Tahun') {
-        allProducts = data[selectedYear];
+        allProducts = data.filter(item => item.tahun == selectedYear);
       } else {
         for (const year in data) {
-          allProducts.push(...data[year]);
+          allProducts = data;
         }
       }
 
       const filtered = allProducts.filter(product =>
-        product.produk.toLowerCase().includes(searchInput.toLowerCase())
+        product.productName.toLowerCase().includes(searchInput.toLowerCase())
       );
-
+      
       setFilteredProducts(filtered);
       setWarningMessage('');
     }
@@ -863,7 +865,7 @@ const Dashboard = () => {
                           <p className="font-poppins text-xxs">Global</p>
                         </div>
                         <p
-                          className={`w-44 flex items-center justify-center text-center font-poppins text-sm 
+                          className={`w-44 flex items-center justify-center text-center font-poppins text-sm
                             ${totalNetProfit > 2000000 ? 'text-[#27AE60]' :
                               totalNetProfit >= 1900000 && totalNetProfit <= 2000000 ? 'text-[#FFA412]' :
                                 'text-red-500'}`}>
@@ -913,26 +915,25 @@ const Dashboard = () => {
                       <div className="col-span-1 text-xxs">#</div>
                       <div className="col-span-10 text-xxs">Name</div>
 
-                      {filteredProducts.length === 0 && (
+                      {/* {filteredProducts.length === 0 && ( */}
                         <div className="flex justify-end col-span-1 text-xxs">Sales</div>
-                      )}
+                      {/* )} */}
                     </div>
 
                     {(filteredProducts.length > 0 ? filteredProducts : topProducts).map((product, index) => {
                       const percentage = totalProducts > 0
-                        ? Math.floor((product.penjualan / totalProducts) * 100)
+                        ? Math.floor((product.total / totalProducts) * 100)
                         : 0;
-
                       return (
                         <div key={index} className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3">
                           <div className="col-span-1 text-xs">{String(index + 1).padStart(2, '0')}</div>
-                          <div className="col-span-10 text-xs">{product.produk}</div>
+                          <div className="col-span-10 text-xs">{product.productName}</div>
 
-                          {filteredProducts.length === 0 && (
+                          {/* {filteredProducts.length === 0 && ( */}
                             <div className="flex justify-center items-center col-span-1 text-xxs border border-[#0095FF] bg-[#F0F9FF] rounded-sm text-[#0095FF]">
                               {percentage}%
                             </div>
-                          )}
+                          {/* )} */}
                         </div>
                       );
                     })}
@@ -966,14 +967,14 @@ const Dashboard = () => {
                           border: 'none',
                         }}
                       >
-                        {Object.entries(countryData).map(([country, data], index) => (
+                        {countryData.map((countryObj, index) => (
                           <div
-                            key={country}
+                            key={countryObj.country}
                             style={{
                               marginBottom: '5px',
                             }}
                           >
-                            {country}: {data}
+                            {countryObj.country}: {countryObj.total}
                           </div>
                         ))}
                       </div>
