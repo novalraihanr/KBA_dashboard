@@ -29,7 +29,7 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
-    const targetCustomer = [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 5];
+    const targetCustomer = [3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 5];
 
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],

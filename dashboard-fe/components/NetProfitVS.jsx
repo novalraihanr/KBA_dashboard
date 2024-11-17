@@ -29,7 +29,7 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
-    const targetProfit = [150000, 170000, 170000, 180000, 190000, 200000, 200000, 200000, 220000, 220000, 360000, 240000];
+    const targetProfit = [150000, 170000, 170000, 180000, 190000, 200000, 200000, 200000, 220000, 220000, 360000,240000];
 
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],

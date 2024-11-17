@@ -29,7 +29,7 @@ const BarChart = ({ selectedYear }) => {
         }
     }, [selectedYear]);
 
-    const targetPenjualan = [3000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 25000, 7500];
+    const targetPenjualan = [1000, 3500, 4000, 4500, 5000, 5500, 6000, 6500, 7000, 7500, 25000, 7500];
 
     const data = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
