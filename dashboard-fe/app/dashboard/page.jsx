@@ -10,6 +10,7 @@ import PenjualanVS from "@components/PenjualanVS";
 import UniqueCustVS from "@components/UniqueCustVS";
 import NetProfitVS from "@components/NetProfitVS";
 import RefBundling from "@components/RefBundling";
+import CustSubs from "@components/CustSubs";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
@@ -1275,6 +1276,9 @@ const Dashboard = () => {
                   />
                 </div>
                 {/* CHURN */}
+                <div className="col-span-7 bg-white rounded-lg p-3">
+                  <CustSubs />
+                </div>
               </div>
             </div>
           </div>
