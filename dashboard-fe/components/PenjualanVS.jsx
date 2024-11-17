@@ -37,8 +37,8 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Reality Sales',
                 data: penjualanData,
-                backgroundColor: penjualanData.map((value, index) => value < targetPenjualan[index] ? '#FF0000' : '#4AB58E'),
-                borderColor: penjualanData.map((value, index) => value < targetPenjualan[index] ? '#FF0000' : '#4AB58E'),
+                backgroundColor: '#4AB58E',
+                borderColor: '#4AB58E',
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,

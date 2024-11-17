@@ -37,8 +37,8 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Actual Income',
                 data: pendapatanData,
-                backgroundColor: pendapatanData.map((value, index) => value < targetPendapatan[index] ? '#FF0000' : '#4AB58E'),
-                borderColor: pendapatanData.map((value, index) => value < targetPendapatan[index] ? '#FF0000' : '#4AB58E'),
+                backgroundColor: '#4AB58E',
+                borderColor: '#4AB58E',
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,

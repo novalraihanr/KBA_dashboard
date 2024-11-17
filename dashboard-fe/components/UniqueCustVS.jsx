@@ -37,8 +37,8 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Customer Count',
                 data: customerData,
-                backgroundColor: customerData.map((value, index) => value < targetCustomer[index] ? '#FF0000' : '#4AB58E'),
-                borderColor: customerData.map((value, index) => value < targetCustomer[index] ? '#FF0000' : '#4AB58E'),
+                backgroundColor: '#4AB58E',
+                borderColor: '#4AB58E',
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,

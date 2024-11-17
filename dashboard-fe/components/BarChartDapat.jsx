@@ -35,7 +35,12 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Pendapatan',
                 data: pendapatanData,
-                backgroundColor: '#0095FF',
+                backgroundColor: pendapatanData.map((value, index) => {
+                    if (selectedYear === "2005" && index >= 6) { //INI INDEX NYA JUGA BISA DIGANTI PAL SESUAI BULAN KOSONGNYA
+                        return '#FFA412'; 
+                    }
+                    return '#0095FF'; 
+                }),
                 borderColor: '#0095FF',
                 borderWidth: 0,
                 barThickness: 7,
@@ -56,7 +61,12 @@ const BarChart = ({ selectedYear }) => {
                     label: (context) => {
                         const label = context.dataset.label || '';
                         const value = context.raw;
-                        return label ? `${label}: ${value}` : value;
+                        const monthIndex = context.dataIndex;
+
+                        if (selectedYear === "2005" && monthIndex >= 6) { //INI JUGA
+                            return `Pendapatan (Prediction): ${value}`;
+                        }
+                        return `${label}: ${value}`;
                     },
                 },
                 intersect: false,

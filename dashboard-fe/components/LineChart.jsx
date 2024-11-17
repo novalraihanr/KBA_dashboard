@@ -1,10 +1,27 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { useEffect, useState } from "react";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const LineChart = ({ selectedYear }) => {
   const [netProfitData, setNetProfitData] = useState([]);
@@ -14,31 +31,52 @@ const LineChart = ({ selectedYear }) => {
       const response = await fetch(`http://localhost:8080/revenue`);
       const data = await response.json();
 
-      const yearData = data.filter(item => item.tahun == selectedYear);
+      const yearData = data.filter((item) => item.tahun == selectedYear);
 
       if (yearData) {
-        const profitValues = yearData.map(item => item.net_profit);
+        const profitValues = yearData.map((item) => item.net_profit);
         setNetProfitData(profitValues);
       } else {
-        setNetProfitData([]); 
+        setNetProfitData([]);
       }
     };
 
-    if (selectedYear !== 'Tahun') {
+    if (selectedYear !== "Tahun") {
       fetchNetProfit();
     }
   }, [selectedYear]);
 
+  const isYear2005 = selectedYear === "2005";
+
   const data = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+    labels: [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Agu",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ],
     datasets: [
       {
-        label: 'Net Profit',
+        label: "Net Profit",
         data: netProfitData,
-        borderColor: '#3CD856',
-        backgroundColor: 'rgba(75,192,192,0.2)',
+        borderColor: "#3CD856",
+        backgroundColor: "rgba(75,192,192,0.2)",
         fill: true,
         tension: 0.4,
+        segment: { //VAL IKI INDEX NYA GANTIEN SESUAI BULAN KOSONG NYA MULAI DARI BULAN KE BERAPA
+          borderColor: (ctx) =>
+            isYear2005 && ctx.p0DataIndex >= 5 ? "#FFA412" : "#3CD856",
+          borderDash: (ctx) =>
+            isYear2005 && ctx.p0DataIndex >= 5 ? [6, 6] : [],
+        },
       },
     ],
   };
@@ -52,13 +90,19 @@ const LineChart = ({ selectedYear }) => {
       tooltip: {
         callbacks: {
           label: (context) => {
-            const label = context.dataset.label || '';
+            const label = context.dataset.label || "";
             const value = context.raw;
-            return label ? `${label}: ${value}` : value;
+            const monthIndex = context.dataIndex;
+            const monthLabel = labels[monthIndex];
+            
+            if (isYear2005 && monthIndex >= 6) { //INI JUGA BISA DIATUR INDEX NYA VAL
+              return `${monthLabel} (Prediction): ${value}`;
+            }
+            return `${label}: ${value}`;
           },
         },
         intersect: false,
-        mode: 'index',
+        mode: "index",
         animationDuration: 400,
       },
     },
@@ -67,8 +111,8 @@ const LineChart = ({ selectedYear }) => {
         ticks: {
           font: {
             size: 8,
-            style: 'normal',
-            color: '#464E5F',
+            style: "normal",
+            color: "#464E5F",
           },
           callback: function (value, index) {
             return data.labels[index];
@@ -78,7 +122,7 @@ const LineChart = ({ selectedYear }) => {
         },
         grid: {
           display: false,
-        }
+        },
       },
       y: {
         beginAtZero: true,
@@ -88,7 +132,7 @@ const LineChart = ({ selectedYear }) => {
           },
           stepSize: 10000,
           callback: function (value) {
-            return value / 1000 + 'k';
+            return value / 1000 + "k";
           },
         },
         grid: {
@@ -104,20 +148,20 @@ const LineChart = ({ selectedYear }) => {
     elements: {
       line: {
         tension: 0.4,
-        borderColor: '#3CD856',
+        borderColor: "#3CD856",
         borderWidth: 2,
       },
       point: {
         radius: 3,
         hoverRadius: 5,
         hoverBorderWidth: 2,
-        backgroundColor: '#FF0000',
-        borderColor: '#FF0000',
+        backgroundColor: "#FF0000",
+        borderColor: "#FF0000",
       },
     },
     hover: {
       intersect: false,
-      mode: 'index',
+      mode: "index",
       animationDuration: 400,
     },
     animation: {

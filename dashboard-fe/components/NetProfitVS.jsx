@@ -37,8 +37,8 @@ const BarChart = ({ selectedYear }) => {
             {
                 label: 'Actual Profit',
                 data: netProfitData,
-                backgroundColor: netProfitData.map((value, index) => value < targetProfit[index] ? '#FF0000' : '#4AB58E'),
-                borderColor: netProfitData.map((value, index) => value < targetProfit[index] ? '#FF0000' : '#4AB58E'),
+                backgroundColor: '#4AB58E',
+                borderColor: '#4AB58E',
                 borderWidth: 1,
                 borderRadius: 5,
                 barThickness: 20,

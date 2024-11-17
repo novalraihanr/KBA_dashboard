@@ -33,9 +33,14 @@ const BarChart = ({ selectedYear }) => {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
         datasets: [
             {
-                label: 'Pendapatan',
+                label: 'Penjualan',
                 data: penjualanData,
-                backgroundColor: '#0095FF',
+                backgroundColor: penjualanData.map((value, index) => {
+                    if (selectedYear === "2005" && index >= 6) { //INI INDEX NYA JUGA BISA DIGANTI PAL SESUAI BULAN KOSONGNYA
+                        return '#FFA412'; 
+                    }
+                    return '#0095FF'; 
+                }),
                 borderColor: '#0095FF',
                 borderWidth: 0,
                 barThickness: 7,
@@ -56,7 +61,12 @@ const BarChart = ({ selectedYear }) => {
                     label: (context) => {
                         const label = context.dataset.label || '';
                         const value = context.raw;
-                        return label ? `${label}: ${value}` : value;
+                        const monthIndex = context.dataIndex;
+
+                        if (selectedYear === "2005" && monthIndex >= 6) { //INI JUGA
+                            return `Penjualan (Prediction): ${value}`;
+                        }
+                        return `${label}: ${value}`;
                     },
                 },
                 intersect: false,
