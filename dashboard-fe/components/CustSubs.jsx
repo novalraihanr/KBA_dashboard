@@ -67,7 +67,7 @@ const CustSubs = () => {
           <div className="col-span-1 text-xxs">#</div>
           <div className="col-span-5 text-xxs">Name</div>
           <div className="col-span-2 text-xxs text-center">Purchases</div>
-          <div className="col-span-4 text-xxs text-end">Churn Prediction</div>
+          <div className="col-span-4 text-xxs text-end">Loyal Stop Prediction</div>
         </div>
 
         {filteredCustomers.length === 0 ? (
