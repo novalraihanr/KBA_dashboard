@@ -43,7 +43,7 @@ const CustSubs = () => {
   return (
     <div className="col-span-5 bg-white rounded-lg p-3">
       <div className="flex justify-between">
-        <p className="text-[#05004E] font-poppins font-semibold">Top Customers</p>
+        <p className="text-[#05004E] font-poppins font-semibold">Customer Loyalty</p>
         <input
           type="text"
           placeholder="Search Customer"
