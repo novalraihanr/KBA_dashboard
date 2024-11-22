@@ -8,7 +8,17 @@ const RefBundling = () => {
       try {
         const response = await fetch("/api/bundling");
         const data = await response.json();
-        setBundlingData(data);
+
+        const formattedData = {};
+        Object.keys(data).forEach((key) => {
+          const [bundlingKey, itemKey] = key.split("_");
+          if (!formattedData[bundlingKey]) {
+            formattedData[bundlingKey] = [];
+          }
+          formattedData[bundlingKey].push(data[key]);
+        });
+
+        setBundlingData(formattedData);
       } catch (error) {
         console.error("Error fetching bundling data:", error);
       }
@@ -39,7 +49,7 @@ const RefBundling = () => {
             >
               <div className="col-span-1 text-xs">{idx + 1}</div>
               <div className="col-span-11 text-xs">
-                {bundlingData[bundlingKey].map((product, productIndex) => (
+                {bundlingData[bundlingKey]?.map((product, productIndex) => (
                   <div key={productIndex}>{product}</div>
                 ))}
               </div>
