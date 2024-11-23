@@ -94,7 +94,7 @@ const LineChart = ({ selectedYear }) => {
             const value = context.raw;
             const monthIndex = context.dataIndex;
             const monthLabel = labels[monthIndex];
-            
+
             if (isYear2005 && monthIndex >= 6) { //INI JUGA BISA DIATUR INDEX NYA VAL
               return `${monthLabel} (Prediction): ${value}`;
             }

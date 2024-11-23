@@ -30,7 +30,7 @@ export async function GET(request) {
       ],
       2005: [
           { month: 'Jan', netProfit: 13000 },
-          { month: 'Feb', netProfit: 17000 },
+          { month: 'Feb', netProfit: 17000 }, 
           { month: 'Mar', netProfit: 22000 },
           { month: 'Apr', netProfit: 27000 },
           { month: 'May', netProfit: 33000 },

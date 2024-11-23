@@ -2,7 +2,7 @@ const { db } = require('../database/config')
 
 async function getRevenue() {
   try {
-    const result = (await db).query('SELECT w.tahun, w.bulan, SUM(f.net_profit) as net_profit FROM facts f INNER JOIN dim_waktu w ON w.sk_waktu = f.sk_waktu GROUP BY w.tahun, w.bulan')
+    const result = (await db).query('SELECT * FROM net_profit_tahun')
     return result
   } catch (error) {
     console.error(error)
@@ -12,7 +12,7 @@ async function getRevenue() {
 
 async function getPendapatan() {
   try {
-    const result = (await db).query('SELECT w.tahun, w.bulan, SUM(f.revenue) as revenue FROM facts f INNER JOIN dim_waktu w ON w.sk_waktu = f.sk_waktu GROUP BY w.tahun, w.bulan')
+    const result = (await db).query('SELECT * from revenue_tahun')
     return result
   } catch (error) {
     console.error(error)
@@ -22,7 +22,7 @@ async function getPendapatan() {
 
 async function getPenjualan() {
   try {
-    const result = (await db).query('SELECT w.tahun, w.bulan, SUM(od.quantityOrdered) as penjualan FROM facts f INNER JOIN dim_waktu w ON w.sk_waktu = f.sk_waktu INNER JOIN dim_order_detail od ON od.sk_order_detail = f.sk_order_detail GROUP BY w.tahun, w.bulan')
+    const result = (await db).query('SELECT * from penjualan_tahun')
     return result
   } catch (error) {
     console.error(error)
