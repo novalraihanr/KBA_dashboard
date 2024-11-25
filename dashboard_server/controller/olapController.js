@@ -140,4 +140,24 @@ async function countryPejualanTahun() {
   }
 }
 
-module.exports = { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun }
+async function getBundle() {
+  try {
+    const result = (await db).query('select list_item as items from bundle_items bi')
+    return result
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+async function getChurn() {
+  try {
+    const result = (await db).query('SELECT * FROM customer_churn')
+    return result
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
+module.exports = { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun, getBundle, getChurn}

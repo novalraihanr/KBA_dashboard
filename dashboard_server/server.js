@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const port = 8080
 
-const { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun } = require ('./controller/olapController')
+const { getRevenue, getPendapatan, getPenjualan, getCustomer, getTotalRevenueTahun, getTotalPenjualanTahun, getTotalBersihTahun, getTotalCustomerTahun, getTotalRevenue, getTotalPendapatan, getTotalPenjualan, getTotalCustomer, rankProduct, countryPejualanTahun, getBundle, getChurn } = require ('./controller/olapController')
 
 app.get('/', (req, res) => {
     res.send('Test')
@@ -80,8 +80,16 @@ app.get('/country', async (req, res) => {
     res.json(results[0])
 })
 
+app.get('/bundle', async (req, res) => {
+    const results = await getBundle()
+    res.json(results[0])
+})
+
+app.get('/churn', async (req, res) => {
+    const results = await getChurn()
+    res.json(results[0])
+})
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
-

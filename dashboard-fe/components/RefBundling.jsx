@@ -6,19 +6,10 @@ const RefBundling = () => {
   useEffect(() => {
     const fetchBundlingData = async () => {
       try {
-        const response = await fetch("/api/bundling");
+        const response = await fetch("http://localhost:8080/bundle");
         const data = await response.json();
 
-        const formattedData = {};
-        Object.keys(data).forEach((key) => {
-          const [bundlingKey, itemKey] = key.split("_");
-          if (!formattedData[bundlingKey]) {
-            formattedData[bundlingKey] = [];
-          }
-          formattedData[bundlingKey].push(data[key]);
-        });
-
-        setBundlingData(formattedData);
+        setBundlingData(data.slice(0, 4));
       } catch (error) {
         console.error("Error fetching bundling data:", error);
       }
@@ -42,16 +33,14 @@ const RefBundling = () => {
         </div>
 
         {bundlingData ? (
-          ["bundling1", "bundling2", "bundling3"].map((bundlingKey, idx) => (
+          bundlingData.map((item, idx) => (
             <div
               key={idx}
               className="grid grid-cols-12 text-[#444A6D] border-b pb-3 mt-3"
             >
               <div className="col-span-1 text-xs">{idx + 1}</div>
               <div className="col-span-11 text-xs">
-                {bundlingData[bundlingKey]?.map((product, productIndex) => (
-                  <div key={productIndex}>{product}</div>
-                ))}
+                <div>{item.items}</div>
               </div>
             </div>
           ))

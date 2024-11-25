@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 
 const CustSubs = () => {
-  const [searchInput, setSearchInput] = useState(""); 
-  const [customers, setCustomers] = useState([]); 
-  const [filteredCustomers, setFilteredCustomers] = useState([]); 
-  const [warningMessage, setWarningMessage] = useState(""); 
+  const [searchInput, setSearchInput] = useState("");
+  const [customers, setCustomers] = useState([]);
+  const [filteredCustomers, setFilteredCustomers] = useState([]);
+  const [warningMessage, setWarningMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/churn/");
+        const response = await fetch("http://localhost:8080/churn");
         const data = await response.json();
 
-        const sortedData = data.sort((a, b) => b.purchases - a.purchases);
+        const sortedData = data.sort((a, b) => b.frequensiBeli - a.frequensiBeli);
 
         setCustomers(sortedData);
-        setFilteredCustomers(sortedData.slice(0, 10)); 
+        setFilteredCustomers(sortedData.slice(0, 10));
       } catch (error) {
         console.error("Error fetching data:", error);
         setWarningMessage("Failed to fetch data.");
@@ -34,7 +34,7 @@ const CustSubs = () => {
   const handleSearch = (event) => {
     if (event.key === "Enter") {
       const filtered = customers.filter((customer) =>
-        customer.name.toLowerCase().includes(searchInput.toLowerCase())
+        customer.customerName.toLowerCase().includes(searchInput.toLowerCase())
       );
       setFilteredCustomers(filtered);
     }
@@ -67,7 +67,7 @@ const CustSubs = () => {
           <div className="col-span-1 text-xxs">#</div>
           <div className="col-span-5 text-xxs">Name</div>
           <div className="col-span-2 text-xxs text-center">Purchases</div>
-          <div className="col-span-4 text-xxs text-end">Loyal Stop Prediction</div>
+          <div className="col-span-4 text-xxs text-end">Churn?</div>
         </div>
 
         {filteredCustomers.length === 0 ? (
@@ -83,9 +83,13 @@ const CustSubs = () => {
               <div className="col-span-1 text-xs">
                 {String(index + 1).padStart(2, "0")}
               </div>
-              <div className="col-span-5 text-xs">{customer.name}</div>
-              <div className="col-span-2 text-xs text-center">{customer.purchases}</div>
-              <div className="col-span-4 text-xs text-end">{customer.churnPrediction}</div>
+              <div className="col-span-5 text-xs">{customer.customerName}</div>
+              <div className="col-span-2 text-xs text-center">{customer.frequensiBeli}</div>
+              <div className="col-span-4 text-xs text-end">{customer.churn === 1 ? (
+                  <div>True</div>
+                ) : (
+                  <div>False</div>
+                )}</div>
             </div>
           ))
         )}
